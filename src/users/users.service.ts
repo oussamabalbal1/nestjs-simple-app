@@ -23,4 +23,9 @@ export class UsersService {
         return this.userrepository.save(user_data);
     }
 
+    async getAllUsers():Promise<User[]>{
+        const user_data = this.userrepository.find()
+        return user_data;
+    }
+
 }
