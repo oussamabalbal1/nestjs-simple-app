@@ -7,7 +7,7 @@
     <h1>Registered Users</h1>
     <ul>
       {{#each users}}
-        <li>{{username}} - {{email}}</li>
+        <li>{{this.username}} - {{this.email}}</li>
       {{/each}}
     </ul>
     <a href="/register">Back to Registration</a>
