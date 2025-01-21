@@ -25,11 +25,11 @@ export class AppController {
       return { message: 'User registered successfully!', users: this.users };
   }
     
-  @Get('users')
-  @Render('users')
-  listUsers() {
-    return { users: this.users };
-  }
+  // @Get('users')
+  // @Render('users')
+  // listUsers() {
+  //   return { users: this.users };
+  // }
   
   @Get()
   @Render('index')
