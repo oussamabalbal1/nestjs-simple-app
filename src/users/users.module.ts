@@ -11,5 +11,6 @@ import { User } from './Entity/user.entity';
     //adding entities
     TypeOrmModule.forFeature([User])
 ],
+exports: [UsersService]
 })
 export class UsersModule {}

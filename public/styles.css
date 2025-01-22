@@ -1,4 +1,4 @@
-/* public/styles.css */
+public/styles.css
 
 /* Basic Reset */
 * {
@@ -10,16 +10,26 @@
   
   /* Style the body */
   body {
+    max-width: 800px;
+    margin: 0 auto;
     font-family: Arial, sans-serif;
     background-color: #f4f4f9;
+    text-align: center;
     color: #333;
     padding: 20px;
+    
   }
   
   /* Center the content */
   h1 {
     text-align: center;
     margin-bottom: 20px;
+  }
+
+  h4 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #ff0000;
   }
   
   form {
@@ -86,3 +96,4 @@
     text-decoration: underline;
   }
   
+

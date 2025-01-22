@@ -1,39 +1,36 @@
 
-import { Get, Controller, Render, Post, Body } from '@nestjs/common';
+import { Get, Controller, Render, Post, Body, Redirect, Query, Param } from '@nestjs/common';
+import { CreateUserDTO } from './users/DTO/user.create.dto';
+import { UsersService } from './users/users.service';
 
 @Controller()
 export class AppController {
+  constructor (private readonly userservice:UsersService){};
 
-  private users = [];
+
   @Get('register')
   @Render('register')
   showRegistrationForm() {
-    return {}; // No data needed for the form initially
+    const podName = process.env.POD_NAME || 'Pod name not available';
+    return {pod_name: `Pod Name: ${podName}`}; // No data needed for the form initially
   }
 
-    // Handle form submission
+
+  // Handle form submission
   @Post('register')
-  registerUser(@Body() body: { username: string; email: string; password: string }) {
-      const { username, email, password } = body;
-  
-      // Add user to the array
-      this.users.push({ username, email, password });
-  
+  @Redirect('/success') // Redirects to the success page
+  async registerUser(@Body() user: CreateUserDTO) {
       // Log the users (for debugging purposes)
-      console.log('Registered Users:', this.users);
-  
-      return { message: 'User registered successfully!', users: this.users };
+      console.log('Registered Users:', user);
+      const data=await this.userservice.createOneUser(user)
+      return { url: `/success?username=${user.username}` };
   }
     
-  // @Get('users')
-  // @Render('users')
-  // listUsers() {
-  //   return { users: this.users };
-  // }
-  
-  @Get()
-  @Render('index')
-  root() {
-    return { message: 'Hello world!',name:'oussama',list: ['oussama','ali','abbes'] };
+
+  @Get('success')
+  @Render('success') // Renders the success.hbs template
+  showSuccessPage(@Query('username') username: string) {
+    return {username};
   }
+
 }

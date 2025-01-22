@@ -24,7 +24,7 @@ export class UsersService {
     }
 
     async getAllUsers():Promise<User[]>{
-        const user_data = this.userrepository.find()
+        const user_data = await this.userrepository.find()
         return user_data;
     }
 
