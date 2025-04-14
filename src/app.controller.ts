@@ -16,6 +16,9 @@ export class AppController {
   }
 
 
+
+
+
   // Handle form submission
   @Post('register')
   @Redirect('/success') // Redirects to the success page
