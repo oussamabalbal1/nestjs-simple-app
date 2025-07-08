@@ -37,10 +37,9 @@ export class AppController {
   }
 
   
-  @Get('live')
-  @HttpCode(200) // Explicitly set status code
-  live() {
-    return { message: 'live' };
+  @Get('health')
+  checkHealth() {
+    console.log('Health Check -- CONSOLE LOG');
+    return { status: 'OK' }; // ALB expects HTTP 200
   }
-
 }
