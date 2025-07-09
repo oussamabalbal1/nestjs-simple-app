@@ -12,15 +12,13 @@ COPY package*.json ./
 # Install dependencies
 # npm ci, which installs dependencies based exactly on your lock file, faster and cleaner than npm install
 # --only=production flag skips devDependencies, reducing the image size and attack surface
-RUN npm ci --only=production
+RUN npm install
 
 # Must ensure dist/ is passed as an artifact from the build job to the containerization job
-COPY dist ./dist
-COPY views ./views
-COPY public ./public
+COPY . . 
 
 # Optional — just for documentation
 EXPOSE 3000  
 
 # node dist/main It launches your NestJS app from the compiled entry file
-CMD ["node", "dist/main"]
+CMD ["npm", "start"]
