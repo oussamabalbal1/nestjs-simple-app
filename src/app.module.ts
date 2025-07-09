@@ -3,6 +3,8 @@ import { AppController } from './app.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { PrometheusService } from './monitoring/prometheus.service';
+import { MetricsController } from './monitoring/metrics.controller';
 
 @Module({
   imports: [
@@ -28,7 +30,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
     UsersModule,
   ],
-  controllers: [AppController],
-  providers: [],
+  controllers: [AppController,MetricsController],
+  providers: [PrometheusService],
 })
 export class AppModule {}

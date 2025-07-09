@@ -1,45 +1,30 @@
-
-import { Get, Controller, Render, Post, Body, Redirect, Query, Param } from '@nestjs/common';
-import { CreateUserDTO } from './users/DTO/user.create.dto';
-import { UsersService } from './users/users.service';
+import { Get, Controller, Render, Query, HttpCode } from '@nestjs/common';
 
 @Controller()
 export class AppController {
-  constructor (private readonly userservice:UsersService){};
-
-
-  @Get('register')
+  // Default page to register a user to postgres database
+  @Get()
+  @HttpCode(200) // Explicitly set status code
+  // Render register front-end page
   @Render('register')
   showRegistrationForm() {
+    // Extract pod_name fron evironment variables
     const podName = process.env.POD_NAME || 'Pod name not available';
-    return {pod_name: `Pod Name: ${podName}`}; // No data needed for the form initially
+    // Pass pod_name to HBS template
+    return { pod_name: `Pod Name: ${podName}` };
   }
 
-
-
-
-
-  // Handle form submission
-  @Post('register')
-  @Redirect('/success') // Redirects to the success page
-  async registerUser(@Body() user: CreateUserDTO) {
-      // Log the users (for debugging purposes)
-      console.log('Registered Users:', user);
-      const data=await this.userservice.createOneUser(user)
-      return { url: `/success?username=${user.username}` };
-  }
-    
-
+  // Render success page after user creation
   @Get('success')
-  @Render('success') // Renders the success.hbs template
+  @Render('success')
   showSuccessPage(@Query('username') username: string) {
-    return {username};
+    return { username };
   }
 
-  
-  @Get('health')
-  checkHealth() {
-    console.log('Health Check -- CONSOLE LOG');
-    return { status: 'OK' }; // ALB expects HTTP 200
+  @Get('live')
+  @HttpCode(200) // Explicitly set status code
+  live() {
+    return { message: 'live' };
   }
+
 }
