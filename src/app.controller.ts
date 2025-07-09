@@ -21,10 +21,10 @@ export class AppController {
     return { username };
   }
 
-  @Get('health')
-  health() {
-    console.log('Health Checks..');
-    return { status: 'ok' };
+  @Get('live')
+  @HttpCode(200) // Explicitly set status code
+  live() {
+    return { message: 'live' };
   }
 
 }
