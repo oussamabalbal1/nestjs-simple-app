@@ -1,22 +1,51 @@
 version: 0.2
 
 phases:
+
+
+
+  # This is for installing dependencies needed for your build. 
+  # For example, installing npm packages or system-level tools. It's a good place to set up your environment.
+  install:
+    commands:
+      - echo Installing NodeJs dependencies
+      - npm install
+
+
+  # This phase is for commands you want to run before the main build starts. 
+  # Common uses include logging into a registry (like we're doing with ECR), running linters, or setting environment variables.   
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+
+      # Linting
+      - npm run lint
+
+
+
+ # This is the main event! Here, you compile your code, run your primary tests (unit, integration, coverage)
   build:
     commands: 
       - echo Build started on `date`
-      - echo Installing dependencies...
-      - npm install
-      - echo Running tests with coverage...
-      # - npm run test:cov
+
+      # Test
+      - echo Running unit tests
+      - npm run test users.controller
+      - npm run test app.controller
+      - npm run test users.service
+
+      # Build application
       - echo Building the NestJS app...
       - npm run build
+
+      # Imaage building
       - echo Building the Docker image...
       - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
       - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+
+
+  # This phase runs after the build is complete. It's perfect for pushing your Docker image to a registry, generating and uploading test reports, or sending notifications.
   post_build:
     commands:
       - echo Build completed on `date`
