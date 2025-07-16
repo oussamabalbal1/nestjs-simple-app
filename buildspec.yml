@@ -51,7 +51,19 @@ phases:
       - echo Build completed on `date`
       - echo Pushing the Docker image...
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+# Defines the files to be saved from the build
+artifacts:
+  files:
+    - imagedefinitions.json
+    - 'coverage/**/*' # This will grab all files in the coverage report folder
+  discard-paths: yes
 
+# Defines paths to be cached for future builds
+cache:
+  paths:
+    - 'node_modules/**/*'
+
+    
 # version: 0.2
 
 # phases:
