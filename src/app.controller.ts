@@ -27,4 +27,11 @@ export class AppController {
     return { status: 'ok' };
   }
 
+  @Get('live')
+  @HttpCode(200) // Explicitly set status code
+  live() {
+    return { message: 'live' };
+  }
+
+
 }
