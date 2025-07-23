@@ -8,7 +8,6 @@ WORKDIR /app
 
 # Copy package.json and package-lock.json
 COPY package*.json ./
-
 # Install dependencies
 # npm ci, which installs dependencies based exactly on your lock file, faster and cleaner than npm install
 # --only=production flag skips devDependencies, reducing the image size and attack surface
