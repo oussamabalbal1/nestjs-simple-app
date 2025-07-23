@@ -12,7 +12,6 @@ COPY package*.json ./
 # npm ci, which installs dependencies based exactly on your lock file, faster and cleaner than npm install
 # --only=production flag skips devDependencies, reducing the image size and attack surface
 RUN npm install
-
 # Must ensure dist/ is passed as an artifact from the build job to the containerization job
 COPY . . 
 
