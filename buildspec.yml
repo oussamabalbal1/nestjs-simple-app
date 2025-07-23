@@ -1,98 +1,97 @@
-version: 0.2
-
-phases:
-
-
-
-  # This is for installing dependencies needed for your build. 
-  # For example, installing npm packages or system-level tools. It's a good place to set up your environment.
-  install:
-    commands:
-      - echo Installing NodeJs dependencies
-      - npm install
-
-
-  # This phase is for commands you want to run before the main build starts. 
-  # Common uses include logging into a registry (like we're doing with ECR), running linters, or setting environment variables.   
-  pre_build:
-    commands:
-      - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-
-      # Linting
-      - npm run lint
-
-
-
- # This is the main event! Here, you compile your code, run your primary tests (unit, integration, coverage)
-  build:
-    commands: 
-      - echo Build started on `date`
-
-      # Test
-      - echo Running unit tests
-      - npm run test users.controller
-      - npm run test app.controller
-      - npm run test users.service
-
-      # Build application
-      - echo Building the NestJS app...
-      - npm run build
-
-      # Imaage building
-      - echo Building the Docker image...
-      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
-      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
-
-
-  # This phase runs after the build is complete. It's perfect for pushing your Docker image to a registry, generating and uploading test reports, or sending notifications.
-  post_build:
-    commands:
-      - echo Build completed on `date`
-      - echo Pushing the Docker image...
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
-# Defines the files to be saved from the build
-artifacts:
-  files:
-    - imagedefinitions.json
-    - 'coverage/**/*' # This will grab all files in the coverage report folder
-  discard-paths: yes
-
-# Defines paths to be cached for future builds
-cache:
-  paths:
-    - 'node_modules/**/*'
-
-    
 # version: 0.2
 
 # phases:
+
+
+
+#   # This is for installing dependencies needed for your build. 
+#   # For example, installing npm packages or system-level tools. It's a good place to set up your environment.
+#   install:
+#     commands:
+#       - echo Installing NodeJs dependencies
+#       - npm install
+
+
+#   # This phase is for commands you want to run before the main build starts. 
+#   # Common uses include logging into a registry (like we're doing with ECR), running linters, or setting environment variables.   
 #   pre_build:
 #     commands:
 #       - echo Logging in to Amazon ECR...
 #       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-#       - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME
-#       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-#       - IMAGE_TAG=${COMMIT_HASH:=latest}
 
+#       # Linting
+#       - npm run lint
+
+
+
+#  # This is the main event! Here, you compile your code, run your primary tests (unit, integration, coverage)
 #   build:
-#     commands:
+#     commands: 
 #       - echo Build started on `date`
-#       - set -e # Exit immediately if a command exits with a non-zero status.
+
+#       # Test
+#       - echo Running unit tests
+#       - npm run test users.controller
+#       - npm run test app.controller
+#       - npm run test users.service
+
+#       # Build application
+#       - echo Building the NestJS app...
+#       - npm run build
+
+#       # Imaage building
 #       - echo Building the Docker image...
-#       - docker build -t $REPOSITORY_URI:latest .
-#       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
-      
+#       - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+#       - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+
+
+#   # This phase runs after the build is complete. It's perfect for pushing your Docker image to a registry, generating and uploading test reports, or sending notifications.
 #   post_build:
 #     commands:
 #       - echo Build completed on `date`
-#       - echo Pushing the Docker images...
-#       - docker push $REPOSITORY_URI:latest
-#       - docker push $REPOSITORY_URI:$IMAGE_TAG
-#       - echo Writing image definitions file...
-#       # - printf '[{"name":"%s","imageUri":"%s"}]' "${project_name}-container" "$REPOSITORY_URI:$IMAGE_TAG" > imagedefinitions.json
-#       - printf '[{"name":"%s","imageUri":"%s"}]' "$CONTAINER_NAME" "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG" > imagedefinitions.json
-
+#       - echo Pushing the Docker image...
+#       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+# # Defines the files to be saved from the build
 # artifacts:
 #   files:
 #     - imagedefinitions.json
+#   discard-paths: yes
+
+# # Defines paths to be cached for future builds
+# cache:
+#   paths:
+#     - 'node_modules/**/*'
+
+    
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
+
+  build:
+    commands:
+      - echo Build started on `date`
+      - set -e # Exit immediately if a command exits with a non-zero status.
+      - echo Building the Docker image...
+      - docker build -t $REPOSITORY_URI:latest .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+      
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Writing image definitions file...
+      # - printf '[{"name":"%s","imageUri":"%s"}]' "${project_name}-container" "$REPOSITORY_URI:$IMAGE_TAG" > imagedefinitions.json
+      - printf '[{"name":"%s","imageUri":"%s"}]' "$CONTAINER_NAME" "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG" > imagedefinitions.json
+
+artifacts:
+  files:
+    - imagedefinitions.json
